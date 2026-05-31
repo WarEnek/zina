@@ -1,0 +1,28 @@
+{
+  "name": "proofroll-arena",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "web:dev": "cd apps/web && bun run dev",
+    "web:typecheck": "cd apps/web && bun run typecheck",
+    "web:build": "cd apps/web && bun run build",
+    "contracts:build": "bash -lc 'export PATH=\"$HOME/.foundry/bin:$PATH\" && cd packages/contracts && forge build'",
+    "contracts:test": "bash -lc 'export PATH=\"$HOME/.foundry/bin:$PATH\" && cd packages/contracts && forge test -vvv'",
+    "contracts:export-abi": "bash packages/contracts/scripts/export-abi.sh",
+    "contracts:sync-web": "bash packages/contracts/scripts/sync-web-artifacts.sh",
+    "verify:local": "bun run web:typecheck && bun run web:build && bun run contracts:test",
+    "audit:acceptance": "bash ./scripts_acceptance_audit.sh",
+    "finalize:readme": "bash ./scripts_finalize_readme.sh",
+    "preflight:external": "bash ./scripts_external_readiness.sh",
+    "help:external": "bash ./scripts_external_next_steps.sh",
+    "e2e:local": "bash ./scripts_local_e2e.sh",
+    "deploy:sepolia": "bash ./scripts_deploy_sepolia.sh",
+    "deploy:supabase": "bash ./scripts_deploy_supabase.sh"
+  },
+  "devDependencies": {
+    "supabase": "^2.102.0"
+  }
+}

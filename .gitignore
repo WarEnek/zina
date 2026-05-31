@@ -1,0 +1,19 @@
+# Node/Bun
+node_modules/
+apps/web/node_modules/
+apps/web/dist/
+
+# Env secrets
+.env
+.env.*
+!.env.example
+
+# Foundry
+packages/contracts/cache/
+packages/contracts/out/
+packages/contracts/broadcast/
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/
