@@ -1,6 +1,6 @@
 # Acceptance Audit
 
-Date: 2026-05-31
+Date: 2026-06-01
 
 ## Legend
 
@@ -62,8 +62,8 @@ Date: 2026-05-31
    - Evidence: `packages/contracts/scripts/export-abi.sh`, `sync-web-artifacts.sh`.
 3. README finalization automation for live URL/address/explorer — `DONE (local evidence)`
    - Evidence: `scripts_finalize_readme.sh`, `package.json` (`finalize:readme`).
-4. Public frontend URL + live contract address + explorer in README — `PENDING (external)`
-   - Contract address + explorer filled; public frontend URL still pending.
+4. Public frontend URL + live contract address + explorer in README — `DONE (external evidence)`
+   - Evidence: README contains deployed URL `https://zina-eight.vercel.app`, live contract, and explorer link.
 
 ## 6.1 CI Gate
 
@@ -89,6 +89,5 @@ Date: 2026-05-31
 
 ## Final Objective Status
 
-- Full objective: `NOT COMPLETE YET`.
-- Blocking external items only:
-  1. Public frontend deployment URL.
+- Full objective: `COMPLETE`.
+- Blocking external items: none.

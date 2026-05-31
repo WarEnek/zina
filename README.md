@@ -2,7 +2,7 @@
 
 ## Public Demo
 
-URL: TODO
+URL: https://zina-eight.vercel.app
 
 ## Contract
 

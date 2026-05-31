@@ -31,6 +31,23 @@ for f in \
 done
 
 echo "== External Pending =="
-echo "- Sepolia deploy + verified explorer URL"
-echo "- Public frontend URL"
-echo "- Supabase function deployed with secrets"
+README_FILE="$ROOT/README.md"
+CONTRACT_ADDR="0x7bf135b84ac39ffe258318a6ce21e651143cf9d6"
+
+if rg -q "^URL: https://[^ ]+" "$README_FILE"; then
+  echo "DONE - Public frontend URL"
+else
+  echo "PENDING - Public frontend URL"
+fi
+
+if rg -qi "Address: \`$CONTRACT_ADDR\`" "$README_FILE" && rg -q "https://sepolia.etherscan.io/address/$CONTRACT_ADDR" "$README_FILE"; then
+  echo "DONE - Sepolia deploy + verified explorer URL"
+else
+  echo "PENDING - Sepolia deploy + verified explorer URL"
+fi
+
+if rg -q "SUPABASE_SYNC_ROLL_EVENT_URL=https://[^ ]+/sync-roll-event" "$ROOT/apps/web/.env.local"; then
+  echo "DONE - Supabase function deployed with secrets (env wired)"
+else
+  echo "PENDING - Supabase function deployed with secrets"
+fi
