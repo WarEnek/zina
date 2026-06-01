@@ -17,15 +17,24 @@ const cookieMintedAbi = [
   },
 ] as const
 
+const corsHeaders = {
+  'access-control-allow-origin': '*',
+  'access-control-allow-headers': 'authorization, x-client-info, apikey, content-type',
+  'access-control-allow-methods': 'POST, OPTIONS',
+}
+
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { 'content-type': 'application/json' },
+    headers: { 'content-type': 'application/json', ...corsHeaders },
   })
 }
 
 Deno.serve(async (request) => {
   try {
+    if (request.method === 'OPTIONS') {
+      return new Response('ok', { headers: corsHeaders })
+    }
     if (request.method !== 'POST') return json({ ok: false, message: 'Method not allowed' }, 405)
 
     const body = await request.json().catch(() => null) as { txHash?: string } | null

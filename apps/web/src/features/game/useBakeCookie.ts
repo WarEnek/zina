@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { decodeEventLog } from 'viem'
+import { parseEventLogs } from 'viem'
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi'
 import { sepolia } from 'wagmi/chains'
 import { cookieForgeAbi } from '../../shared/contracts/cookieForgeAbi'
@@ -27,22 +27,6 @@ export function useBakeCookie(onSettled?: () => Promise<unknown> | unknown) {
         return
       }
 
-      // Preflight compatibility check: ensures the configured address exposes CookieForge reads.
-      try {
-        await publicClient.readContract({
-          address: cookieForgeAddress,
-          abi: cookieForgeAbi,
-          functionName: 'getWeights',
-        })
-      } catch {
-        setTxState({
-          status: 'failed',
-          message:
-            'Configured contract is not a compatible CookieForge deployment on Sepolia. Update VITE_COOKIEFORGE_CONTRACT_ADDRESS to a CookieForge address.',
-        })
-        return
-      }
-
       setTxState({ status: 'simulating' })
       const simulation = await publicClient.simulateContract({
         address: cookieForgeAddress,
@@ -58,25 +42,35 @@ export function useBakeCookie(onSettled?: () => Promise<unknown> | unknown) {
       setTxState({ status: 'confirming', hash })
       const receipt = await publicClient.waitForTransactionReceipt({ hash })
 
-      const mintedLog = receipt.logs.find((log) => log.address.toLowerCase() === cookieForgeAddress.toLowerCase())
-      if (!mintedLog) {
+      const decodedLogs = parseEventLogs({
+        abi: cookieForgeAbi,
+        logs: receipt.logs,
+        eventName: 'CookieMinted',
+        strict: false,
+      })
+      const mintedEvent = decodedLogs.find((log) => log.address.toLowerCase() === cookieForgeAddress.toLowerCase())
+      if (!mintedEvent?.args) {
         setTxState({ status: 'failed', message: 'CookieMinted event not found.' })
         return
       }
-
-      const decoded = decodeEventLog({
-        abi: cookieForgeAbi,
-        data: mintedLog.data,
-        topics: mintedLog.topics,
-        eventName: 'CookieMinted',
-      })
+      const { requestId, user, tokenId, rarity, randomValue } = mintedEvent.args
+      if (
+        requestId === undefined ||
+        user === undefined ||
+        tokenId === undefined ||
+        rarity === undefined ||
+        randomValue === undefined
+      ) {
+        setTxState({ status: 'failed', message: 'Decoded CookieMinted event is incomplete.' })
+        return
+      }
 
       const event: BakeEvent = {
-        requestId: decoded.args.requestId,
-        player: decoded.args.user,
-        tokenId: decoded.args.tokenId,
-        rarity: decoded.args.rarity,
-        randomValue: decoded.args.randomValue,
+        requestId,
+        player: user,
+        tokenId,
+        rarity,
+        randomValue,
         txHash: hash,
         blockNumber: receipt.blockNumber,
       }

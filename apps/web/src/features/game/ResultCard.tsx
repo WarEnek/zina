@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo } from 'react'
+import { lazy, Suspense } from 'react'
 import { useReducedMotion } from 'framer-motion'
 import { BakeEvent, TxState } from '../../shared/types/game'
 import { getCookieMetaByTokenId, getRarityByIndex } from '../../shared/config/cookies'
@@ -12,15 +12,23 @@ export function ResultCard({ latestBake, txStatus }: { latestBake: BakeEvent | n
   const prefersReducedMotion = useReducedMotion()
 
   if (!latestBake) return null
+  if (
+    latestBake.requestId === undefined ||
+    latestBake.tokenId === undefined ||
+    latestBake.rarity === undefined ||
+    latestBake.randomValue === undefined
+  ) {
+    return null
+  }
 
   const rarity = getRarityByIndex(latestBake.rarity)
   const cookieMeta = getCookieMetaByTokenId(Number(latestBake.tokenId))
   const isMinting = txStatus === 'simulating' || txStatus === 'awaiting-signature' || txStatus === 'submitted' || txStatus === 'confirming'
   const cookieName = cookieMeta?.name ?? `Token ${latestBake.tokenId.toString()}`
-  const revealKey = useMemo(() => latestBake.requestId.toString(), [latestBake.requestId])
+  const revealKey = latestBake.requestId.toString()
 
   return (
-    <div className="rounded-sm border border-slate-300 p-3">
+    <div className="result-panel">
       <div className="mb-2 flex items-center justify-between">
         <p className="text-sm font-semibold">Reward reveal</p>
         <span className={`rarity-pill rarity-${String(rarity).toLowerCase()}`}>{rarity}</span>
