@@ -1,4 +1,4 @@
-# ProofRoll Arena
+# Cookie Forge
 
 ## Public Demo
 
@@ -12,7 +12,7 @@ Explorer: https://sepolia.etherscan.io/address/0x7bf135b84ac39ffe258318a6ce21e65
 
 ## What this is
 
-Testnet-only verifiable on-chain game demo.
+Testnet-only verifiable on-chain cookie collectible demo.
 
 ## What this is not
 
@@ -22,7 +22,7 @@ Not gambling. No real money. No real value. No deposits. No withdrawals. No payo
 
 - React 19 + TypeScript + Vite + Tailwind
 - wagmi + viem + RainbowKit
-- Supabase JS client (cache/leaderboard only)
+- Supabase JS client (cookie analytics cache only)
 - Solidity + Foundry
 
 ## Repo
@@ -69,7 +69,7 @@ Run full local check from root:
 bun run verify:local
 ```
 
-Optional local on-chain smoke (anvil deploy + roll):
+Optional local on-chain smoke (anvil deploy + bake):
 
 ```bash
 bun run e2e:local
@@ -115,7 +115,7 @@ bun run contracts:build
 bun run contracts:export-abi
 ```
 
-Then set `VITE_PROOFROLL_CONTRACT_ADDRESS` in `apps/web/.env`.
+Then set `VITE_COOKIEFORGE_CONTRACT_ADDRESS` (or legacy `VITE_PROOFROLL_CONTRACT_ADDRESS`) in `apps/web/.env`.
 
 One-step sync (address + ABI):
 
@@ -135,13 +135,13 @@ Finalize README after real deploy:
 bun run finalize:readme -- https://your-app.example 0xYourContractAddress https://sepolia.etherscan.io
 ```
 
-## How to verify roll
+## How to verify cookie bake
 
 1. Connect wallet.
 2. Switch to Sepolia.
-3. Click `Roll on-chain`.
+3. Click `Bake Cookie`.
 4. Open tx explorer link from UI.
-5. Check `RollResolved` event values in logs.
+5. Check `CookieMinted` event values in logs.
 6. Compare event values with UI result card.
 7. Open verified contract source page.
 
@@ -157,11 +157,11 @@ bun run finalize:readme -- https://your-app.example 0xYourContractAddress https:
 Set in Supabase function secrets:
 
 - `SEPOLIA_RPC_URL`
-- `PROOFROLL_CONTRACT_ADDRESS`
+- `COOKIEFORGE_CONTRACT_ADDRESS`
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
 
-Function verifies tx receipt against Sepolia RPC, checks target contract, decodes `RollResolved`, then upserts cache by `tx_hash`.
+Function verifies tx receipt against Sepolia RPC, checks target contract, decodes `CookieMinted`, then upserts `cookie_events_cache` by `tx_hash`.
 
 ## Deployment Checklist
 

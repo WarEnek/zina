@@ -1,9 +1,11 @@
-import { RollEvent } from '../../shared/types/game'
+import { BakeEvent } from '../../shared/types/game'
 
-export function RecentRolls({ latestRoll }: { latestRoll: RollEvent | null }) {
+export function RecentRolls({ latestRoll }: { latestRoll: BakeEvent | null }) {
   return (
-    <div className="text-sm text-white/70">
-      {latestRoll ? `Recent roll #${latestRoll.rollId.toString()} result ${latestRoll.result}` : 'No rolls yet.'}
+    <div className="text-sm text-slate-600">
+      {latestRoll
+        ? `Latest bake #${latestRoll.requestId.toString()} minted token ${latestRoll.tokenId.toString()}`
+        : 'No cookie bakes yet.'}
     </div>
   )
 }

@@ -46,6 +46,15 @@ check_var_in_file() {
   fi
 }
 
+has_var_in_file() {
+  local file="$1"
+  local key="$2"
+  if [ ! -f "$file" ]; then
+    return 1
+  fi
+  grep -qE "^${key}=.+$" "$file"
+}
+
 echo "== Commands =="
 check_cmd bun
 check_cmd forge
@@ -66,14 +75,23 @@ check_var_in_file "$CONTRACT_ENV" "ETHERSCAN_API_KEY"
 
 echo "== Web Env =="
 echo "Using web env file: $WEB_ENV"
-check_var_in_file "$WEB_ENV" "VITE_PROOFROLL_CONTRACT_ADDRESS"
+if has_var_in_file "$WEB_ENV" "VITE_COOKIEFORGE_CONTRACT_ADDRESS" || has_var_in_file "$WEB_ENV" "VITE_PROOFROLL_CONTRACT_ADDRESS"; then
+  echo "OK   contract address env present (cookieforge or legacy key)"
+else
+  echo "MISS contract address env in $(basename "$WEB_ENV")"
+  fail=1
+fi
 check_var_in_file "$WEB_ENV" "VITE_SUPABASE_URL"
 check_var_in_file "$WEB_ENV" "VITE_SUPABASE_PUBLISHABLE_KEY"
 check_var_in_file "$WEB_ENV" "VITE_SUPABASE_SYNC_ROLL_EVENT_URL"
 
 echo "== Address sanity =="
 if [ -f "$WEB_ENV" ]; then
-  ADDR="$(grep -E '^VITE_PROOFROLL_CONTRACT_ADDRESS=' "$WEB_ENV" | head -n1 | cut -d= -f2-)"
+  ADDR="$(grep -E '^VITE_COOKIEFORGE_CONTRACT_ADDRESS=' "$WEB_ENV" | head -n1 | cut -d= -f2- || true)"
+  if [ -z "$ADDR" ]; then
+    ADDR="$(grep -E '^VITE_PROOFROLL_CONTRACT_ADDRESS=' "$WEB_ENV" | head -n1 | cut -d= -f2- || true)"
+  fi
+
   if [[ "$ADDR" =~ ^0x[a-fA-F0-9]{40}$ ]] && [[ "$ADDR" != "0x0000000000000000000000000000000000000000" ]]; then
     echo "OK   contract address format"
   else

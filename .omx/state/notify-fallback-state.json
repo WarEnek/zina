@@ -1,0 +1,88 @@
+{
+  "pid": 247465,
+  "parent_pid": 247453,
+  "started_at": "2026-05-31T21:08:25.788Z",
+  "cwd": "/home/warenek/projects/zina",
+  "notify_script": "/home/warenek/.nvm/versions/node/v22.12.0/lib/node_modules/oh-my-codex/dist/scripts/notify-hook.js",
+  "authority_only": false,
+  "poll_ms": 250,
+  "effective_poll_ms": 250,
+  "idle_max_poll_ms": 1000,
+  "pid_file": null,
+  "max_lifetime_ms": 0,
+  "tracked_files": 0,
+  "seen_turns": 0,
+  "dispatch_drain": {
+    "enabled": true,
+    "max_per_tick": 5,
+    "run_count": 1,
+    "leader_only": true,
+    "last_tick_at": "2026-05-31T21:08:25.791Z",
+    "last_result": {
+      "processed": 0,
+      "skipped": 0,
+      "failed": 0
+    },
+    "last_error": null
+  },
+  "leader_nudge": {
+    "enabled": true,
+    "leader_only": true,
+    "stale_threshold_ms": 180000,
+    "precomputed_leader_stale": true,
+    "last_tick_at": "2026-05-31T21:08:25.792Z",
+    "last_error": null,
+    "run_count": 1
+  },
+  "ralph_continue_steer": {
+    "enabled": true,
+    "cadence_ms": 60000,
+    "message": "Ralph loop active continue",
+    "active": false,
+    "last_state_check_at": "2026-05-31T21:08:25.818Z",
+    "last_sent_at": "",
+    "cooldown_anchor_at": "",
+    "last_reason": "cleared",
+    "last_error": null,
+    "state_path": "",
+    "pane_id": "",
+    "pane_current_command": "",
+    "current_phase": "",
+    "subagent_session_id": "",
+    "active_subagent_thread_ids": [],
+    "shared_timestamp_path": "/home/warenek/projects/zina/.omx/state/ralph-last-steer-at",
+    "shared_last_sent_at": "",
+    "singleton_lock_path": "/home/warenek/projects/zina/.omx/state/ralph-continue-steer.lock"
+  },
+  "fallback_auto_nudge": {
+    "enabled": true,
+    "stall_ms": 5000,
+    "last_tick_at": "2026-05-31T21:08:25.817Z",
+    "last_turn_at": "2026-05-31T21:07:21.602Z",
+    "last_turn_count": 0,
+    "last_message": "",
+    "last_reason": "hud_state_incomplete",
+    "last_error": null,
+    "last_nudged_signature": "",
+    "last_nudged_at": ""
+  },
+  "authority_backoff": {
+    "active": false,
+    "reason": "",
+    "primary_pid": null,
+    "primary_last_tick_at": "",
+    "freshness_ms": null,
+    "threshold_ms": null
+  },
+  "adaptive_poll": {
+    "enabled": true,
+    "base_ms": 250,
+    "max_ms": 1000,
+    "current_ms": 250,
+    "idle_streak": 0,
+    "last_tick_at": "2026-05-31T21:08:25.818Z",
+    "last_activity_at": "2026-05-31T21:08:25.818Z",
+    "last_activity_reason": "leader_nudge"
+  },
+  "last_cycle_activity": "leader_nudge"
+}

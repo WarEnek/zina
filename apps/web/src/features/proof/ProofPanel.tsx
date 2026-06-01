@@ -1,25 +1,25 @@
-import { RollEvent } from '../../shared/types/game'
+import { BakeEvent } from '../../shared/types/game'
 import { getAddressUrl, getBlockUrl, getTxUrl } from '../../shared/utils/explorer'
-import { proofRollArenaAddress } from '../../shared/contracts/addresses'
+import { cookieForgeAddress } from '../../shared/contracts/addresses'
 import { ExplorerLink } from './ExplorerLink'
 import { ContractVerificationCard } from './ContractVerificationCard'
 import { LatestEventCard } from './LatestEventCard'
 import { TrustBoundaryCard } from './TrustBoundaryCard'
 
-export function ProofPanel({ latestRoll }: { latestRoll: RollEvent | null }) {
+export function ProofPanel({ latestBake }: { latestBake: BakeEvent | null }) {
   return (
     <div className="card space-y-2">
-      <h2 className="text-xl font-semibold">Proof panel</h2>
-      <p className="text-sm text-white/70">Every roll is Sepolia tx. Contract stores result; Supabase only caches public data.</p>
+      <h2 className="text-xl font-semibold">Transparency panel</h2>
+      <p className="text-sm text-slate-600">Every cookie bake is Sepolia tx. Contract stores mint results; Supabase only caches public data.</p>
       <TrustBoundaryCard />
-      <ContractVerificationCard contractUrl={getAddressUrl(proofRollArenaAddress)} />
-      {latestRoll ? (
+      <ContractVerificationCard contractUrl={getAddressUrl(cookieForgeAddress)} />
+      {latestBake ? (
         <>
-          <ExplorerLink href={getTxUrl(latestRoll.txHash)} label="Latest transaction" />
-          <ExplorerLink href={getBlockUrl(latestRoll.blockNumber)} label="Latest block" />
+          <ExplorerLink href={getTxUrl(latestBake.txHash)} label="Bake transaction" />
+          <ExplorerLink href={getBlockUrl(latestBake.blockNumber)} label="VRF fulfillment / mint block" />
         </>
       ) : null}
-      <LatestEventCard latestRoll={latestRoll} />
+      <LatestEventCard latestBake={latestBake} />
     </div>
   )
 }

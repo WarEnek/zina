@@ -6,6 +6,7 @@ Date: 2026-06-01
 
 - `DONE (local evidence)` — implemented and verified in repo.
 - `PENDING (external)` — requires deployed infra or external credentials/state.
+- `UNVERIFIED IN THIS ENV` — implementation exists, but runtime evidence not produced in current environment.
 
 ## 1. Wallet and Network
 
@@ -16,78 +17,69 @@ Date: 2026-06-01
 3. Block unsupported networks and offer switch to Sepolia — `DONE (local evidence)`
    - Evidence: `apps/web/src/features/network/NetworkGuard.tsx`, `UnsupportedNetworkBanner.tsx`, `SwitchNetworkButton.tsx`.
 4. Disconnected/connecting/connected/wrong-network/rejected states — `DONE (local evidence)`
-   - Evidence: `useWalletStatus.ts`, `useRoll.ts`, `GamePanel.tsx`.
+   - Evidence: `useWalletStatus.ts`, `useBakeCookie.ts`, `GamePanel.tsx`.
 
 ## 2. Contract
 
-1. Contract stores roll result, stats, emits events, no custody/payments — `DONE (local evidence)`
-   - Evidence: `packages/contracts/src/ProofRollArena.sol`.
-2. Contract tests exist and pass — `DONE (local evidence)`
-   - Evidence: `packages/contracts/test/ProofRollArena.t.sol`, `forge test` output (`6/6` pass).
-3. Deployed on Sepolia + verified source — `DONE (external evidence)`
-   - Evidence: deployed `0x7bf135b84ac39ffe258318a6ce21e651143cf9d6`, explorer shows verified source: `https://sepolia.etherscan.io/address/0x7bf135b84ac39ffe258318a6ce21e651143cf9d6`.
+1. Contract stores bake result, stats, emits events, no custody/payments — `DONE (local evidence)`
+   - Evidence: `packages/contracts/src/CookieForge.sol`.
+2. Contract tests exist — `DONE (local evidence)`
+   - Evidence: `packages/contracts/test/CookieForge.t.sol`.
+3. Contract tests pass in current environment — `DONE (local evidence)`
+   - Evidence: `bun run verify:local` succeeded; `forge test -vvv` shows `6 passed, 0 failed` for `CookieForge.t.sol`.
+4. Deployed on Sepolia + verified source — `PENDING (external)`
+   - Needs fresh post-rename verification for `CookieForge` artifact.
 
-## 3. Game UI
+## 3. Bake UI
 
-1. Trigger roll transaction, show lifecycle (signature/submitted/confirming/confirmed/rejected/failed) — `DONE (local evidence)`
-   - Evidence: `apps/web/src/features/game/useRoll.ts`, `GamePanel.tsx`.
-2. Show latest result and tx hash link — `DONE (local evidence)`
+1. Trigger bake transaction and show lifecycle — `DONE (local evidence)`
+   - Evidence: `apps/web/src/features/game/useBakeCookie.ts`, `GamePanel.tsx`.
+2. Show latest cookie result and tx hash link — `DONE (local evidence)`
    - Evidence: `ResultCard.tsx`, `GamePanel.tsx`.
-3. Show score/streak/total rolls — `DONE (local evidence)`
+3. Show bake stats by rarity — `DONE (local evidence)`
    - Evidence: `PlayerStatsCard.tsx`, `usePlayerStats.ts`.
 
-## 4. Verification UI
+## 4. Transparency UI
 
-1. Show contract address and explorer links (contract/tx/block) — `DONE (local evidence)`
+1. Show contract/tx/block links — `DONE (local evidence)`
    - Evidence: `ProofPanel.tsx`, `ExplorerLink.tsx`, `shared/utils/explorer.ts`.
-2. Show decoded event data + explain on-chain vs Supabase cache — `DONE (local evidence)`
-   - Evidence: `LatestEventCard.tsx`, `TrustBoundaryCard.tsx`, `VerificationExplainer.tsx`.
+2. Show decoded bake event fields — `DONE (local evidence)`
+   - Evidence: `LatestEventCard.tsx`.
+3. Show declared probability and odds transparency — `DONE (local evidence)`
+   - Evidence: `LatestEventCard.tsx`, `OddsTransparencyCard.tsx`.
 
-## 5. Supabase
+## 5. Collection and Analytics
 
-1. Profiles/events/leaderboard migrations + RLS/public-read policies — `DONE (local evidence)`
-   - Evidence: `supabase/migrations/001_profiles.sql`, `002_roll_events.sql`, `003_leaderboard.sql`.
-2. No service role key in frontend — `DONE (local evidence)`
-   - Evidence: `apps/web/.env.example` (publishable key only), no service-role usage in frontend code.
-3. Server-verified event sync function — `DONE (local evidence)`
-   - Evidence: `supabase/functions/sync-roll-event/index.ts` validates receipt/contract/event before upsert.
-4. Supabase project/function deployed with real secrets — `DONE (external evidence)`
-   - Evidence: `bun run deploy:supabase` completed (`functions deploy sync-roll-event`, `secrets set`).
+1. Cookie collection from ERC-1155 balances — `DONE (local evidence)`
+   - Evidence: `CookieCollectionCard.tsx`.
+2. Rarity filter and owned/silhouette states — `DONE (local evidence)`
+   - Evidence: `CookieCollectionCard.tsx`.
+3. Supabase cookie analytics cache/view wiring — `DONE (local evidence)`
+   - Evidence: `supabase/migrations/004_cookie_events.sql`, `features/leaderboard/*`.
 
-## 6. Deployment and README
+## 6. Supabase Function and Migrations
 
-1. Root scripts for local verification — `DONE (local evidence)`
-   - Evidence: `package.json` (`verify:local`, `contracts:*`, `web:*`).
-2. ABI/address sync automation — `DONE (local evidence)`
-   - Evidence: `packages/contracts/scripts/export-abi.sh`, `sync-web-artifacts.sh`.
-3. README finalization automation for live URL/address/explorer — `DONE (local evidence)`
-   - Evidence: `scripts_finalize_readme.sh`, `package.json` (`finalize:readme`).
-4. Public frontend URL + live contract address + explorer in README — `DONE (external evidence)`
-   - Evidence: README contains deployed URL `https://zina-eight.vercel.app`, live contract, and explorer link.
+1. Server-verified event sync function for `CookieMinted` — `DONE (local evidence)`
+   - Evidence: `supabase/functions/sync-roll-event/index.ts`.
+2. Secrets naming aligned with cookieforge + fallback — `DONE (local evidence)`
+   - Evidence: `sync-roll-event/.env.example`, `scripts_deploy_supabase.sh`.
+3. Function deployed with real secrets — `PENDING (external)`
 
-## 6.1 CI Gate
+## 7. Deployment Tooling and Docs
 
-1. CI workflow to enforce local gates on push/PR — `DONE (local evidence)`
-   - Evidence: `.github/workflows/ci.yml` (`bun run verify:local`).
+1. Deploy/sync scripts aligned with `CookieForge` artifact naming — `DONE (local evidence)`
+   - Evidence: `Deploy.s.sol`, `export-abi.sh`, `sync-web-artifacts.sh`, `scripts_deploy_sepolia.sh`, `scripts_local_e2e.sh`.
+2. README and checklist aligned with cookie terminology — `DONE (local evidence)`
+   - Evidence: `README.md`, `DEPLOYMENT_CHECKLIST.md`.
 
-## 7. Safety Constraints
-
-1. No deposit/withdraw/payout/stake/wager logic — `DONE (local evidence)`
-   - Evidence: contract/API surface; app copy/disclaimers in `README.md`, `App.tsx`.
-2. Testnet-only positioning and disclaimer — `DONE (local evidence)`
-   - Evidence: UI hero/footer + README sections.
-
-## 8. Verification Commands (last run)
+## 8. Verification Commands (this run)
 
 - `bun run verify:local` — PASS.
-- Includes:
-  - `bun run web:typecheck` — PASS.
-  - `bun run web:build` — PASS.
-  - `bun run contracts:test` — PASS (`6/6`).
-- `bun run e2e:local` — PASS.
-  - Includes: local `anvil` deploy, `roll()` tx, receipt success, `totalRolls == 1`.
+  - Includes `web:typecheck` — PASS.
+  - Includes `web:build` — PASS.
+  - Includes `contracts:test` — PASS (`6 passed, 0 failed`).
 
-## Final Objective Status
+## Current Status
 
-- Full objective: `COMPLETE`.
-- Blocking external items: none.
+- Implementation is substantially aligned with `Cookie Forge` objective.
+- External proof steps (deployed/verified contract post-rename and Supabase deployed secrets) remain pending.

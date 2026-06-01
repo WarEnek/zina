@@ -23,7 +23,7 @@ echo "bunx --bun supabase login"
 echo
 echo "6) Deploy Supabase function + secrets"
 echo "bunx --bun supabase functions deploy sync-roll-event"
-echo "bunx --bun supabase secrets set SEPOLIA_RPC_URL=... PROOFROLL_CONTRACT_ADDRESS=0x... SUPABASE_URL=https://... SUPABASE_SERVICE_ROLE_KEY=..."
+echo "bunx --bun supabase secrets set SEPOLIA_RPC_URL=... COOKIEFORGE_CONTRACT_ADDRESS=0x... SUPABASE_URL=https://... SUPABASE_SERVICE_ROLE_KEY=..."
 echo
 echo "7) Final checks"
 echo "bun run preflight:external"

@@ -2,18 +2,16 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 import { createPublicClient, http, isAddressEqual, parseEventLogs } from 'npm:viem@2'
 import { sepolia } from 'npm:viem@2/chains'
 
-const rollResolvedAbi = [
+const cookieMintedAbi = [
   {
     type: 'event',
-    name: 'RollResolved',
+    name: 'CookieMinted',
     inputs: [
-      { indexed: true, name: 'rollId', type: 'uint256' },
-      { indexed: true, name: 'player', type: 'address' },
-      { indexed: false, name: 'result', type: 'uint8' },
-      { indexed: false, name: 'scoreDelta', type: 'int256' },
-      { indexed: false, name: 'newScore', type: 'int256' },
-      { indexed: false, name: 'currentStreak', type: 'uint256' },
-      { indexed: false, name: 'bestStreak', type: 'uint256' },
+      { indexed: true, name: 'user', type: 'address' },
+      { indexed: true, name: 'tokenId', type: 'uint256' },
+      { indexed: false, name: 'rarity', type: 'uint8' },
+      { indexed: false, name: 'randomValue', type: 'uint256' },
+      { indexed: false, name: 'requestId', type: 'uint256' },
     ],
     anonymous: false,
   },
@@ -37,7 +35,10 @@ Deno.serve(async (request) => {
     }
 
     const rpcUrl = Deno.env.get('SEPOLIA_RPC_URL')
-    const contractAddress = Deno.env.get('PROOFROLL_CONTRACT_ADDRESS') as `0x${string}` | undefined
+    const contractAddress =
+      (Deno.env.get('COOKIEFORGE_CONTRACT_ADDRESS') ?? Deno.env.get('PROOFROLL_CONTRACT_ADDRESS')) as
+        | `0x${string}`
+        | undefined
     const supabaseUrl = Deno.env.get('SUPABASE_URL')
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 
@@ -61,15 +62,15 @@ Deno.serve(async (request) => {
     }
 
     const logs = parseEventLogs({
-      abi: rollResolvedAbi,
+      abi: cookieMintedAbi,
       logs: receipt.logs,
-      eventName: 'RollResolved',
+      eventName: 'CookieMinted',
       strict: false,
     })
 
     const event = logs.find((log) => log.address && isAddressEqual(log.address, contractAddress))
     if (!event || !event.args) {
-      return json({ ok: false, message: 'RollResolved event not found' }, 400)
+      return json({ ok: false, message: 'CookieMinted event not found' }, 400)
     }
 
     const supabase = createClient(supabaseUrl, serviceRoleKey)
@@ -78,26 +79,24 @@ Deno.serve(async (request) => {
       contract_address: contractAddress.toLowerCase(),
       tx_hash: txHash.toLowerCase(),
       block_number: Number(receipt.blockNumber),
-      roll_id: event.args.rollId.toString(),
-      wallet_address: event.args.player.toLowerCase(),
-      result: Number(event.args.result),
-      score_delta: Number(event.args.scoreDelta),
-      new_score: event.args.newScore.toString(),
-      current_streak: event.args.currentStreak.toString(),
-      best_streak: event.args.bestStreak.toString(),
+      request_id: event.args.requestId.toString(),
+      wallet_address: event.args.user.toLowerCase(),
+      token_id: Number(event.args.tokenId),
+      rarity: Number(event.args.rarity),
+      random_value: event.args.randomValue.toString(),
     }
 
-    const { error } = await supabase.from('roll_events_cache').upsert(payload, { onConflict: 'tx_hash' })
+    const { error } = await supabase.from('cookie_events_cache').upsert(payload, { onConflict: 'tx_hash' })
     if (error) return json({ ok: false, message: error.message }, 500)
 
     return json({
       ok: true,
       event: {
         txHash,
-        rollId: event.args.rollId.toString(),
-        player: event.args.player,
-        result: Number(event.args.result),
-        scoreDelta: Number(event.args.scoreDelta),
+        requestId: event.args.requestId.toString(),
+        user: event.args.user,
+        tokenId: Number(event.args.tokenId),
+        rarity: Number(event.args.rarity),
       },
     })
   } catch (error) {

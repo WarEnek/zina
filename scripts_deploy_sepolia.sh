@@ -22,7 +22,7 @@ for v in SEPOLIA_RPC_URL PRIVATE_KEY ETHERSCAN_API_KEY; do
   fi
 done
 
-echo "Deploying and verifying ProofRollArena on Sepolia..."
+echo "Deploying and verifying Cookie Forge contract on Sepolia..."
 (
   cd "$CONTRACTS_DIR"
   forge script script/Deploy.s.sol:Deploy \
@@ -40,7 +40,7 @@ fi
 
 ADDRESS="$(bun --eval '
 const data = await Bun.file(process.argv[1]).json();
-const tx = (data.transactions || []).find((t) => t.contractName === "ProofRollArena" && t.contractAddress);
+const tx = (data.transactions || []).find((t) => t.contractName === "CookieForge" && t.contractAddress);
 console.log(tx?.contractAddress ?? "");
 ' "$BROADCAST_FILE")"
 

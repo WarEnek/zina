@@ -2,21 +2,21 @@ export type HexAddress = `0x${string}`
 export type TxHash = `0x${string}`
 
 export type PlayerStats = {
-  totalRolls: bigint
-  score: bigint
-  bestStreak: bigint
-  currentStreak: bigint
-  lastRollId: bigint
+  totalBakes: bigint
+  commonCount: bigint
+  rareCount: bigint
+  epicCount: bigint
+  legendaryCount: bigint
+  mythicCount: bigint
+  lastRequestId: bigint
 }
 
-export type RollEvent = {
-  rollId: bigint
+export type BakeEvent = {
+  requestId: bigint
   player: HexAddress
-  result: number
-  scoreDelta: bigint
-  newScore: bigint
-  currentStreak: bigint
-  bestStreak: bigint
+  tokenId: bigint
+  rarity: number
+  randomValue: bigint
   txHash: TxHash
   blockNumber: bigint
 }
@@ -30,5 +30,5 @@ export type TxState =
   | { status: 'rejected' }
   | { status: 'submitted'; hash: TxHash }
   | { status: 'confirming'; hash: TxHash }
-  | { status: 'confirmed'; hash: TxHash; rollId: bigint }
+  | { status: 'confirmed'; hash: TxHash; requestId: bigint }
   | { status: 'failed'; message: string }

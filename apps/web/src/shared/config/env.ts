@@ -1,5 +1,5 @@
 export const env = {
-  appName: import.meta.env.VITE_APP_NAME ?? 'ProofRoll Arena',
+  appName: import.meta.env.VITE_APP_NAME ?? 'Cookie Forge',
   chainId: Number(import.meta.env.VITE_CHAIN_ID ?? 11155111),
   walletConnectProjectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID ?? '',
   supabaseUrl: import.meta.env.VITE_SUPABASE_URL ?? '',

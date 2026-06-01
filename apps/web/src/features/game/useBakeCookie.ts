@@ -2,20 +2,20 @@ import { useState } from 'react'
 import { decodeEventLog } from 'viem'
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi'
 import { sepolia } from 'wagmi/chains'
-import { proofRollArenaAbi } from '../../shared/contracts/proofRollArenaAbi'
-import { proofRollArenaAddress } from '../../shared/contracts/addresses'
+import { cookieForgeAbi } from '../../shared/contracts/cookieForgeAbi'
+import { cookieForgeAddress } from '../../shared/contracts/addresses'
 import { syncRollEvent } from '../../shared/lib/syncRollEvent'
-import { RollEvent, TxState } from '../../shared/types/game'
+import { BakeEvent, TxState } from '../../shared/types/game'
 
-export function useRoll(onSettled?: () => Promise<unknown> | unknown) {
+export function useBakeCookie(onSettled?: () => Promise<unknown> | unknown) {
   const { address, chainId, isConnected } = useAccount()
   const publicClient = usePublicClient()
   const { data: walletClient } = useWalletClient()
 
   const [txState, setTxState] = useState<TxState>({ status: 'idle' })
-  const [latestRoll, setLatestRoll] = useState<RollEvent | null>(null)
+  const [latestBake, setLatestBake] = useState<BakeEvent | null>(null)
 
-  async function roll() {
+  async function bakeCookie() {
     try {
       setTxState({ status: 'checking-wallet' })
       if (!isConnected || !address || !walletClient || !publicClient) {
@@ -29,9 +29,9 @@ export function useRoll(onSettled?: () => Promise<unknown> | unknown) {
 
       setTxState({ status: 'simulating' })
       const simulation = await publicClient.simulateContract({
-        address: proofRollArenaAddress,
-        abi: proofRollArenaAbi,
-        functionName: 'roll',
+        address: cookieForgeAddress,
+        abi: cookieForgeAbi,
+        functionName: 'bakeCookie',
         account: address,
       })
 
@@ -42,38 +42,35 @@ export function useRoll(onSettled?: () => Promise<unknown> | unknown) {
       setTxState({ status: 'confirming', hash })
       const receipt = await publicClient.waitForTransactionReceipt({ hash })
 
-      const rollLog = receipt.logs.find((log) => log.address.toLowerCase() === proofRollArenaAddress.toLowerCase())
-      if (!rollLog) {
-        setTxState({ status: 'failed', message: 'RollResolved event not found.' })
+      const mintedLog = receipt.logs.find((log) => log.address.toLowerCase() === cookieForgeAddress.toLowerCase())
+      if (!mintedLog) {
+        setTxState({ status: 'failed', message: 'CookieMinted event not found.' })
         return
       }
 
       const decoded = decodeEventLog({
-        abi: proofRollArenaAbi,
-        data: rollLog.data,
-        topics: rollLog.topics,
-        eventName: 'RollResolved',
+        abi: cookieForgeAbi,
+        data: mintedLog.data,
+        topics: mintedLog.topics,
+        eventName: 'CookieMinted',
       })
 
-      const event: RollEvent = {
-        rollId: decoded.args.rollId,
-        player: decoded.args.player,
-        result: decoded.args.result,
-        scoreDelta: decoded.args.scoreDelta,
-        newScore: decoded.args.newScore,
-        currentStreak: decoded.args.currentStreak,
-        bestStreak: decoded.args.bestStreak,
+      const event: BakeEvent = {
+        requestId: decoded.args.requestId,
+        player: decoded.args.user,
+        tokenId: decoded.args.tokenId,
+        rarity: decoded.args.rarity,
+        randomValue: decoded.args.randomValue,
         txHash: hash,
         blockNumber: receipt.blockNumber,
       }
 
-      setLatestRoll(event)
-      setTxState({ status: 'confirmed', hash, rollId: event.rollId })
-      // Optional cache sync. On-chain data remains source of truth.
+      setLatestBake(event)
+      setTxState({ status: 'confirmed', hash, requestId: event.requestId })
       try {
         await syncRollEvent(hash)
       } catch {
-        // Ignore cache sync errors: blockchain result already confirmed.
+        // blockchain is source of truth; cache sync can fail safely
       }
       if (onSettled) await onSettled()
     } catch (error) {
@@ -90,5 +87,5 @@ export function useRoll(onSettled?: () => Promise<unknown> | unknown) {
     setTxState({ status: 'idle' })
   }
 
-  return { roll, txState, latestRoll, reset }
+  return { bakeCookie, txState, latestBake, reset }
 }

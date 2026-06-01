@@ -1,12 +1,12 @@
 import { useReadContract } from 'wagmi'
-import { proofRollArenaAbi } from '../../shared/contracts/proofRollArenaAbi'
-import { proofRollArenaAddress } from '../../shared/contracts/addresses'
+import { cookieForgeAbi } from '../../shared/contracts/cookieForgeAbi'
+import { cookieForgeAddress } from '../../shared/contracts/addresses'
 import { HexAddress, PlayerStats } from '../../shared/types/game'
 
 export function usePlayerStats(address?: HexAddress) {
   const query = useReadContract({
-    address: proofRollArenaAddress,
-    abi: proofRollArenaAbi,
+    address: cookieForgeAddress,
+    abi: cookieForgeAbi,
     functionName: 'playerStats',
     args: address ? [address] : undefined,
     query: { enabled: Boolean(address) },
@@ -15,11 +15,13 @@ export function usePlayerStats(address?: HexAddress) {
   const raw = query.data
   const stats: PlayerStats | undefined = raw
     ? {
-        totalRolls: raw[0],
-        score: BigInt(raw[1]),
-        bestStreak: raw[2],
-        currentStreak: raw[3],
-        lastRollId: raw[4],
+        totalBakes: raw[0],
+        commonCount: raw[1],
+        rareCount: raw[2],
+        epicCount: raw[3],
+        legendaryCount: raw[4],
+        mythicCount: raw[5],
+        lastRequestId: raw[6],
       }
     : undefined
 

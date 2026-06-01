@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "proofroll-arena-web",
+      "name": "cookie-forge-web",
       "dependencies": {
         "@rainbow-me/rainbowkit": "^2.1.6",
         "@supabase/supabase-js": "^2.50.0",

@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "worktreeRoot": "/home/warenek/projects/zina",
+  "gitDir": "/home/warenek/projects/zina/.git",
+  "indexMtimeMs": 1780258189543.7253,
+  "indexSize": 9368,
+  "map": "  apps/: postcss.config, App, main, providers, DiceVisual, GamePanel, PlayerStatsCard, RecentRolls, ResultCard, RollButton\n  supabase/: index",
+  "createdAt": "2026-05-31T21:07:21.596Z"
+}

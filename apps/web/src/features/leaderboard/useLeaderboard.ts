@@ -3,19 +3,22 @@ import { supabase } from '../../shared/lib/supabase'
 
 type LeaderboardRow = {
   wallet_address: string
-  score: number
-  total_rolls: number
-  best_streak: number
+  total_bakes: number
+  common_count: number
+  rare_count: number
+  epic_count: number
+  legendary_count: number
+  mythic_count: number
 }
 
 export function useLeaderboard() {
   return useQuery({
-    queryKey: ['leaderboard'],
+    queryKey: ['cookie-leaderboard'],
     queryFn: async (): Promise<LeaderboardRow[]> => {
       if (!supabase) return []
       const { data, error } = await supabase
-        .from('leaderboard')
-        .select('wallet_address,score,total_rolls,best_streak')
+        .from('cookie_leaderboard')
+        .select('wallet_address,total_bakes,common_count,rare_count,epic_count,legendary_count,mythic_count')
         .limit(20)
       if (error) throw error
       return data ?? []
