@@ -27,6 +27,22 @@ export function useBakeCookie(onSettled?: () => Promise<unknown> | unknown) {
         return
       }
 
+      // Preflight compatibility check: ensures the configured address exposes CookieForge reads.
+      try {
+        await publicClient.readContract({
+          address: cookieForgeAddress,
+          abi: cookieForgeAbi,
+          functionName: 'getWeights',
+        })
+      } catch {
+        setTxState({
+          status: 'failed',
+          message:
+            'Configured contract is not a compatible CookieForge deployment on Sepolia. Update VITE_COOKIEFORGE_CONTRACT_ADDRESS to a CookieForge address.',
+        })
+        return
+      }
+
       setTxState({ status: 'simulating' })
       const simulation = await publicClient.simulateContract({
         address: cookieForgeAddress,
@@ -77,6 +93,12 @@ export function useBakeCookie(onSettled?: () => Promise<unknown> | unknown) {
       const message = error instanceof Error ? error.message : 'Unknown failure'
       if (message.toLowerCase().includes('user rejected')) {
         setTxState({ status: 'rejected' })
+      } else if (message.toLowerCase().includes('execution reverted')) {
+        setTxState({
+          status: 'failed',
+          message:
+            'Contract call reverted. This usually means the contract address is not a compatible CookieForge deployment for the current ABI/network.',
+        })
       } else {
         setTxState({ status: 'failed', message })
       }

@@ -3,7 +3,13 @@ import { useLeaderboard } from './useLeaderboard'
 export function LeaderboardTable() {
   const { data, isLoading, error } = useLeaderboard()
   if (isLoading) return <p className="text-sm text-slate-600">Loading cookie analytics...</p>
-  if (error) return <p className="text-sm text-amber-700">Supabase unavailable. On-chain baking still works.</p>
+  if (error) {
+    const code = (error as { code?: string } | null)?.code
+    if (code === 'PGRST205') {
+      return <p className="text-sm text-amber-700">Cookie analytics cache is not initialized in Supabase (missing schema migration).</p>
+    }
+    return <p className="text-sm text-amber-700">Supabase unavailable. On-chain baking still works.</p>
+  }
   if (!data?.length) return <p className="text-sm text-slate-600">No cached cookie mints yet.</p>
 
   return (

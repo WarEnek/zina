@@ -116,10 +116,8 @@ body {
   color: #3730a3;
 }
 
-.loot-scene {
+.three-loot-scene {
   position: relative;
-  display: grid;
-  place-items: center;
   min-height: 260px;
   overflow: hidden;
   border: 1px solid #d3ddf0;
@@ -127,23 +125,18 @@ body {
   background:
     radial-gradient(120% 80% at 50% 0%, #f7fbff 0%, #e6efff 45%, #d5e3ff 100%),
     linear-gradient(130deg, rgba(255, 255, 255, 0.6), rgba(230, 240, 255, 0.4));
-  perspective: 1200px;
 }
 
-.loot-scene::after {
-  content: '';
-  position: absolute;
-  inset: auto 22% 20px;
-  height: 22px;
-  border-radius: 999px;
-  background: rgba(31, 41, 55, 0.2);
-  filter: blur(12px);
-  opacity: 0.42;
+.three-loot-scene canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
-.loot-scene-pending::before {
+.three-loot-scene-pending::before {
   content: 'Baking drop...';
   position: absolute;
+  z-index: 2;
   top: 10px;
   left: 50%;
   transform: translateX(-50%);
@@ -152,134 +145,4 @@ body {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #1e3a8a;
-}
-
-.loot-card-shell {
-  position: relative;
-  z-index: 2;
-  width: min(84%, 300px);
-  aspect-ratio: 5 / 7;
-}
-
-.loot-card-flip {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-}
-
-.loot-face {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  border-radius: 10px;
-  border: 1px solid #93a7cf;
-  padding: 1rem;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
-.loot-card-back {
-  background:
-    radial-gradient(120% 100% at 20% 20%, #4f7de9 0%, #2f55a8 62%, #243e7a 100%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.18));
-  color: #e8f0ff;
-}
-
-.loot-back-title {
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: 900;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.loot-back-subtitle {
-  margin: 0;
-  font-size: 0.78rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  opacity: 0.88;
-}
-
-.loot-card-front {
-  transform: rotateY(180deg);
-  color: #111827;
-  border-color: #9fb2d9;
-  background:
-    linear-gradient(170deg, rgba(255, 255, 255, 0.92), rgba(239, 246, 255, 0.92)),
-    radial-gradient(circle at 30% 15%, rgba(255, 255, 255, 0.96), rgba(225, 235, 255, 0.9));
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.65), 0 16px 40px rgba(37, 99, 235, 0.22);
-}
-
-.loot-rarity-label {
-  margin: 0;
-  font-size: 0.74rem;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.loot-cookie-name {
-  margin: 0;
-  font-size: 1.34rem;
-  line-height: 1.2;
-  font-weight: 900;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-.loot-cookie-id {
-  margin: 0;
-  font-size: 0.8rem;
-  font-weight: 700;
-  opacity: 0.75;
-}
-
-.loot-rarity-common {
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.65), 0 16px 40px rgba(180, 83, 9, 0.25);
-}
-
-.loot-rarity-rare {
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.65), 0 16px 40px rgba(219, 39, 119, 0.25);
-}
-
-.loot-rarity-epic {
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.65), 0 16px 40px rgba(147, 51, 234, 0.28);
-}
-
-.loot-rarity-legendary {
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.65), 0 16px 42px rgba(234, 179, 8, 0.3);
-}
-
-.loot-rarity-mythic {
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.65), 0 16px 44px rgba(59, 130, 246, 0.34);
-}
-
-.loot-spark {
-  position: absolute;
-  z-index: 1;
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  background: #fff;
-  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.85));
-}
-
-.loot-spark-1 {
-  top: 26%;
-  left: 23%;
-}
-
-.loot-spark-2 {
-  top: 36%;
-  right: 20%;
-}
-
-.loot-spark-3 {
-  bottom: 27%;
-  right: 29%;
 }
